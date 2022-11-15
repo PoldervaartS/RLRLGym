@@ -23,7 +23,9 @@ Press F2 and it will pop-up windows like this:
 ```
 pip install -r requirements.txt 
 ```
+enable RLGYM plubin in Bakkesmod
 
 ## Reference
 [RLGym Website](https://rlgym.org/docs-page.html#getting-started)
+
 [Tutorial](https://www.youtube.com/watch?v=C92_UFZ1W-U)
