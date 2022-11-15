@@ -26,3 +26,4 @@ pip install -r requirements.txt
 
 ## Reference
 [RLGym Website](https://rlgym.org/docs-page.html#getting-started)
+[Tutorial](https://www.youtube.com/watch?v=C92_UFZ1W-U)
