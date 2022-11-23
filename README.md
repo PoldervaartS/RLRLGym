@@ -25,6 +25,13 @@ pip install -r requirements.txt
 ```
 enable RLGYM plubin in Bakkesmod
 
+## Run GPU Version
+Download CUDA
+Download GPU version of Pytorch
+```
+stable_baselines3.common.utils.get_device
+```
+
 ## Reference
 [RLGym Website](https://rlgym.org/docs-page.html#getting-started)
 
