@@ -54,6 +54,8 @@ class myCustomRewards(RewardFunction):
         :return: A reward for the player provided.
         """
         self.rewardUseCounter += 1
+        if self.rewardUseCounter > 0 and self.rewardUseCounter % self.REWARDINCREASESTEP == 0:
+            self.incrementRewardIndexUsed()
         return self.currentRewardToUse.get_reward(player, state, previous_action)
 
     def get_final_reward(self, player: PlayerData, state: GameState, previous_action: np.ndarray) -> float:
@@ -70,6 +72,4 @@ class myCustomRewards(RewardFunction):
         """
 
         print(f'Rewards Count: {self.rewardUseCounter}') 
-        if self.rewardUseCounter > 0 and self.rewardUseCounter % self.REWARDINCREASESTEP == 0:
-            self.incrementRewardIndexUsed()
         return self.currentRewardToUse.get_final_reward(player, state, previous_action)
