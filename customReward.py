@@ -25,7 +25,7 @@ class myCustomRewards(RewardFunction):
         
         """
         # capped for array out of bounds
-        rewardIndex = max(len(self.reward_functions) - 1, self.rewardUseCounter // self.REWARDINCREASESTEP)
+        rewardIndex = min(len(self.reward_functions) - 1, self.rewardUseCounter // self.REWARDINCREASESTEP)
         if self.rewardType == 1:
             self.currentRewardToUse = CombinedReward((self.reward_functions[0: rewardIndex + 1]))
         elif self.rewardType == 2:
