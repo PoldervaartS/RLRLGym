@@ -24,8 +24,8 @@ class myCustomRewards(RewardFunction):
         Redefine the base combined reward if type 1 to now include the other. Type 2 to only be the new values. 
         
         """
-        rewardIndex = self.rewardUseCounter // self.REWARDINCREASESTEP
-        # cap for array out of bounds
+        # capped for array out of bounds
+        rewardIndex = max(len(self.reward_functions) - 1, self.rewardUseCounter // self.REWARDINCREASESTEP)
         if self.rewardType == 1:
             self.currentRewardToUse = CombinedReward((self.reward_functions[0: rewardIndex + 1]))
         elif self.rewardType == 2:
@@ -69,7 +69,7 @@ class myCustomRewards(RewardFunction):
         :return: A reward for the player provided.
         """
 
-        print(f'Final Rewards Count: {self.rewardUseCounter}') 
+        print(f'Rewards Count: {self.rewardUseCounter}') 
         if self.rewardUseCounter > 0 and self.rewardUseCounter % self.REWARDINCREASESTEP == 0:
             self.incrementRewardIndexUsed()
         return self.currentRewardToUse.get_final_reward(player, state, previous_action)
