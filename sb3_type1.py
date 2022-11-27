@@ -19,6 +19,24 @@ from rlgym_tools.sb3_utils import SB3MultipleInstanceEnv
 from rlgym.utils.reward_functions import CombinedReward
 from customReward import myCustomRewards
 from torch.nn import Tanh
+from collections import defaultdict
+from rlgym.utils.gamestates import GameState, PlayerData
+
+class customEventReward(EventReward):
+    def get_reward(self, player: PlayerData, state: GameState, previous_action: np.ndarray, optional_data=None):
+        # print("self.last_registered_values",self.last_registered_values)
+        if player.car_id not in self.last_registered_values:
+            self.last_registered_values[player.car_id] = self._extract_values(player, state)
+        old_values = self.last_registered_values[player.car_id]
+        new_values = self._extract_values(player, state)
+
+        diff_values = new_values - old_values
+        diff_values[diff_values < 0] = 0  # We only care about increasing values
+
+        reward = np.dot(self.weights, diff_values)
+
+        self.last_registered_values[player.car_id] = new_values
+        return reward
 
 if __name__ == '__main__':  # Required for multiprocessing
     frame_skip = 8          # Number of ticks to repeat an action
@@ -31,7 +49,7 @@ if __name__ == '__main__':  # Required for multiprocessing
     rewardType = 1
     rewards = [VelocityPlayerToBallReward(),
                     VelocityBallToGoalReward(),
-                    EventReward(team_goal = 100.0,
+                    customEventReward(team_goal = 100.0,
                                 concede = -100.0,
                                 shot = 5.0,
                                 save = 30.0,

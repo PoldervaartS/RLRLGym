@@ -33,7 +33,7 @@ class myCustomRewards(RewardFunction):
         
         if self.rewardType == 1:
             # reward importance gradually descent
-            self.currentRewardToUse = CombinedReward(self.reward_functions[0: rewardIndex + 1], (self.gamma**x for x in range(rewardIndex, -1, -1)))
+            self.currentRewardToUse = CombinedReward(self.reward_functions[0: rewardIndex + 1], [self.gamma**x for x in range(rewardIndex, -1, -1)])
         elif self.rewardType == 2:
             self.currentRewardToUse = CombinedReward(self.reward_functions[rewardIndex])
         print("Current Rewards: ", self.currentRewardToUse)
