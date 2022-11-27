@@ -6,18 +6,22 @@ from typing import Tuple
 
 class myCustomRewards(RewardFunction):
 
-    def __init__(self, rewardType, reward_functions: Tuple[RewardFunction, ...]):
+    def __init__(self, rewardType, reward_functions: Tuple[RewardFunction, ...], REWARDINCREASESTEP = 10000000, gamma = 0.9):
         super().__init__()
         # reward functions should be passed in order from simplest to most complex
         # rewardType 0 means all, 1 means build up, 2 means just the current value?
         self.rewardType = rewardType
         self.rewardUseCounter = 0
-        self.REWARDINCREASESTEP = 10000000 # 10 million
+        self.REWARDINCREASESTEP = REWARDINCREASESTEP # 10 million
         self.reward_functions = reward_functions
+        self.gamma = 0.9
+        print(self.reward_functions)
         if rewardType == 0:
             self.currentRewardToUse = CombinedReward(reward_functions)
         else:
-            self.currentRewardToUse = CombinedReward((reward_functions[0]))
+            print((reward_functions[0]))
+            self.currentRewardToUse = CombinedReward([reward_functions[0]])
+        print("Current Rewards: ", self.currentRewardToUse)
 
     def incrementRewardIndexUsed(self):
         """
@@ -26,10 +30,13 @@ class myCustomRewards(RewardFunction):
         """
         # capped for array out of bounds
         rewardIndex = min(len(self.reward_functions) - 1, self.rewardUseCounter // self.REWARDINCREASESTEP)
+        
         if self.rewardType == 1:
-            self.currentRewardToUse = CombinedReward((self.reward_functions[0: rewardIndex + 1]))
+            # reward importance gradually descent
+            self.currentRewardToUse = CombinedReward(self.reward_functions[0: rewardIndex + 1], (self.gamma**x for x in range(rewardIndex, -1, -1)))
         elif self.rewardType == 2:
             self.currentRewardToUse = CombinedReward(self.reward_functions[rewardIndex])
+        print("Current Rewards: ", self.currentRewardToUse)
 
 
 
