@@ -32,7 +32,14 @@ Download GPU version of Pytorch
 stable_baselines3.common.utils.get_device
 ```
 
+## Training Data Visulization
+```
+tensorboard --logdir out/logs
+```
+
 ## Reference
 [RLGym Website](https://rlgym.org/docs-page.html#getting-started)
 
 [Tutorial](https://www.youtube.com/watch?v=C92_UFZ1W-U)
+
+[PPO Plots](https://medium.com/aureliantactics/understanding-ppo-plots-in-tensorboard-cbc3199b9ba2)

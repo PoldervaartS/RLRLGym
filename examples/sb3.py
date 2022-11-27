@@ -7,7 +7,7 @@ from stable_baselines3.common.vec_env import VecMonitor, VecNormalize, VecCheckN
 from stable_baselines3.ppo import MlpPolicy
 
 from rlgym.utils.obs_builders import AdvancedObs
-from rlgym.utils.reward_functions.common_rewards import VelocityPlayerToBallReward
+from rlgym.utils.reward_functions.common_rewards import VelocityPlayerToBallReward, VelocityBallToGoalReward, EventReward
 from rlgym.utils.state_setters import DefaultState
 from rlgym.utils.terminal_conditions.common_conditions import TimeoutCondition, GoalScoredCondition
 from rlgym_tools.sb3_utils import SB3MultipleInstanceEnv
@@ -25,9 +25,20 @@ if __name__ == '__main__':  # Required for multiprocessing
 
     def get_match():  # Need to use a function so that each instance can call it and produce their own objects
         return Match(
-            team_size=3,  # 3v3 to get as many agents going as possible, will make results more noisy
+            team_size=1,  # 3v3 to get as many agents going as possible, will make results more noisy
             tick_skip=frame_skip,
-            reward_function=VelocityPlayerToBallReward(),  # Simple reward since example code
+            reward_function=CombinedReward(
+                (
+                      VelocityPlayerToBallReward(),
+                    VelocityBallToGoalReward(),
+                    EventReward(team_goal = 100.0,
+                                concede = -100.0,
+                                shot = 5.0,
+                                save = 30.0,
+                                demo = 10.0,),
+                ),
+                (0.1, 1.0, 1.0)
+            ),  # Simple reward since example code
             spawn_opponents=True,
             terminal_conditions=[TimeoutCondition(round(fps * 30)), GoalScoredCondition()],  # Some basic terminals
             obs_builder=AdvancedObs(),  # Not that advanced, good default
@@ -35,7 +46,7 @@ if __name__ == '__main__':  # Required for multiprocessing
             action_parser=DiscreteAction()  # Discrete > Continuous don't @ me
         )
 
-    env = SB3MultipleInstanceEnv(get_match, 2)            # Start 2 instances, waiting 60 seconds between each
+    env = SB3MultipleInstanceEnv(get_match, 5)            # Start 2 instances, waiting 60 seconds between each
     env = VecCheckNan(env)                                # Optional
     env = VecMonitor(env)                                 # Recommended, logs mean reward and ep_len to Tensorboard
     env = VecNormalize(env, norm_obs=False, gamma=gamma)  # Highly recommended, normalizes rewards
@@ -68,11 +79,11 @@ if __name__ == '__main__':  # Required for multiprocessing
     # Any attribute can be overwritten by using the custom_objects parameter,
     # which includes n_envs (number of agents), which has to be overwritten to use a different amount
     model = PPO.load(
-        "policy/rl_model_1000002_steps.zip",
+        "policy/rl_model_150000000_steps.zip",
         env,
         custom_objects=dict(n_envs=env.num_envs, _last_obs=None),  # Need this to change number of agents
         device="auto",  # Need to set device again (if using a specific one)
         force_reset=True  # Make SB3 reset the env so it doesn't think we're continuing from last state
     )
     # Use reset_num_timesteps=False to keep going with same logger/checkpoints
-    model.learn(100_000_000, callback=callback, reset_num_timesteps=False)
+    model.learn(50_000_000, callback=callback, reset_num_timesteps=False)
