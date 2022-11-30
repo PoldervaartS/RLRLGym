@@ -51,10 +51,18 @@ if __name__ == '__main__':  # Required for multiprocessing
     env = VecMonitor(env)                                 # Recommended, logs mean reward and ep_len to Tensorboard
     env = VecNormalize(env, norm_obs=False, gamma=gamma)  # Highly recommended, normalizes rewards
 
+    policy_kwargs = dict(
+        activation_fn = Tanh,
+        net_arch=[512, 512, dict(pi=[256, 256, 256], vf=[256, 256, 256])]
+    )
+
+
+
     # Hyperparameters presumably better than default; inspired by original PPO paper
     model = PPO(
         MlpPolicy,
         env,
+        policy_kwargs=policy_kwargs,
         n_epochs=32,                 # PPO calls for multiple epochs
         learning_rate=1e-5,          # Around this is fairly common for PPO
         ent_coef=0.01,               # From PPO Atari

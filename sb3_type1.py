@@ -12,6 +12,8 @@ from stable_baselines3.ppo import MlpPolicy
 
 from rlgym.utils.obs_builders import AdvancedObs
 from rlgym.utils.reward_functions.common_rewards import VelocityPlayerToBallReward, VelocityBallToGoalReward, EventReward
+from rlgym.utils.reward_functions.common_rewards import LiuDistancePlayerToBallReward, LiuDistanceBallToGoalReward, RewardIfBehindBall, RewardIfClosestToBall, VelocityReward
+from rlgym.utils import RewardFunction
 from rlgym.utils.state_setters import DefaultState
 from rlgym.utils.terminal_conditions.common_conditions import TimeoutCondition, GoalScoredCondition
 from rlgym_tools.sb3_utils import SB3MultipleInstanceEnv
@@ -48,8 +50,14 @@ if __name__ == '__main__':  # Required for multiprocessing
 
     rewardType = 1
     rewards = [VelocityPlayerToBallReward(),
+                    LiuDistancePlayerToBallReward(),
+                    RewardIfBehindBall(RewardFunction), 
+                    RewardIfClosestToBall(RewardFunction), 
+                    VelocityReward(),
                     VelocityBallToGoalReward(),
+                    LiuDistanceBallToGoalReward(), 
                     customEventReward(team_goal = 100.0,
+                                goal = 100.0,
                                 concede = -100.0,
                                 shot = 5.0,
                                 save = 30.0,
@@ -60,7 +68,7 @@ if __name__ == '__main__':  # Required for multiprocessing
         return Match(
             team_size=1,  # 3v3 to get as many agents going as possible, will make results more noisy
             tick_skip=frame_skip,
-            reward_function=myCustomRewards(rewardType, rewards, REWARDINCREASESTEP=10),
+            reward_function=myCustomRewards(rewardType, rewards, REWARDINCREASESTEP=5000000),
             spawn_opponents=True,
             terminal_conditions=[TimeoutCondition(round(fps * 30)), GoalScoredCondition()],  # Some basic terminals
             obs_builder=AdvancedObs(),  # Not that advanced, good default
@@ -68,7 +76,7 @@ if __name__ == '__main__':  # Required for multiprocessing
             action_parser=DiscreteAction()  # Discrete > Continuous don't @ me
         )
 
-    env = SB3MultipleInstanceEnv(get_match, 1)            # Start 2 instances, waiting 60 seconds between each
+    env = SB3MultipleInstanceEnv(get_match, 5)            # Start 2 instances, waiting 60 seconds between each
     env = VecCheckNan(env)                                # Optional
     env = VecMonitor(env)                                 # Recommended, logs mean reward and ep_len to Tensorboard
     env = VecNormalize(env, norm_obs=False, gamma=gamma)  # Highly recommended, normalizes rewards
@@ -99,16 +107,16 @@ if __name__ == '__main__':  # Required for multiprocessing
     # Save model every so often
     # Divide by num_envs (number of agents) because callback only increments every time all agents have taken a step
     # This saves to specified folder with a specified name
-    callback = CheckpointCallback(round(1_000_000 / env.num_envs), save_path="policy", name_prefix="rl_model")
+    callback = CheckpointCallback(round(1_000_000 / env.num_envs), save_path="type1_policy", name_prefix="rl_model")
 
-    model.learn(100_000_000, callback=callback)
+    # model.learn(100_000_000, callback=callback)
 
     # Now, if one wants to load a trained model from a checkpoint, use this function
     # This will contain all the attributes of the original model
     # Any attribute can be overwritten by using the custom_objects parameter,
     # which includes n_envs (number of agents), which has to be overwritten to use a different amount
     model = PPO.load(
-        "policy/rl_model_150000000_steps.zip",
+        "type1_policy/rl_model_79000000_steps.zip",
         env,
         custom_objects=dict(n_envs=env.num_envs, _last_obs=None),  # Need this to change number of agents
         device="auto",  # Need to set device again (if using a specific one)
