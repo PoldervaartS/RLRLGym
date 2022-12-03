@@ -37,6 +37,10 @@ stable_baselines3.common.utils.get_device
 tensorboard --logdir out/logs
 ```
 
+## Evaluate Bot
+- Download [RLBot](https://rlbot.org/)
+- configure bot.py and bot.cfg in ```Evaluation/src```
+
 ## Reference
 [RLGym Website](https://rlgym.org/docs-page.html#getting-started)
 
