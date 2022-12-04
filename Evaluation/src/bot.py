@@ -33,6 +33,11 @@ class RLGymExampleBot(BaseAgent):
 
         self.expected_teammates = 0
         self.expected_opponents = 1
+
+        self.blue_scores = []
+        self.orange_scores = []
+        self.f = open('E:/Code/RLRLGym/blue_scores.txt', 'w')
+        self.f2 = open('E:/Code/RLRLGym/orange_scores.txt', 'w')
         print(f'{self.name} Ready - Index:', index)
 
     def initialize_agent(self):
@@ -78,10 +83,12 @@ class RLGymExampleBot(BaseAgent):
                 # Grab opponent in same "position" relative to it's teammates
                 opponent = opponents[min(teammates.index(player), len(opponents) - 1)]
 
-                self.game_state.players = [player, opponent[0]]
+                self.game_state.players = [player, opponent]
 
+            # obs = self.obs_builder.build_obs(player, self.game_state, self.action)
+            # self.action = self.agent.act(obs)  # Dim is (N, 8)
             obs = self.obs_builder.build_obs(player, self.game_state, self.action)
-            self.action = self.agent.act(obs)  # Dim is (N, 8)
+            self.action = self.act_parser.parse_actions(self.agent.act(obs), self.game_state)[0]  # Dim is (N, 8)
 
         if self.ticks >= self.tick_skip - 1:
             self.update_controls(self.action)
@@ -89,7 +96,10 @@ class RLGymExampleBot(BaseAgent):
         if self.ticks >= self.tick_skip:
             self.ticks = 0
             self.update_action = True
+        self.f.write(str(self.game_state.__dict__['blue_score']) + ' ')
+        self.f2.write(str(self.game_state.__dict__['orange_score']) + ' ')
 
+        # print(self.game_state.__dict__['blue_score'])
         return self.controls
 
     def update_controls(self, action):

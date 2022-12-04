@@ -11,16 +11,17 @@ class myCustomRewards(RewardFunction):
         # reward functions should be passed in order from simplest to most complex
         # rewardType 0 means all, 1 means build up, 2 means just the current value?
         self.rewardType = rewardType
-        self.rewardUseCounter = 0
+        self.rewardUseCounter = 0 #50000000
         self.REWARDINCREASESTEP = REWARDINCREASESTEP # 10 million
         self.reward_functions = reward_functions
-        self.gamma = 0.9
+        self.gamma = gamma
         print(self.reward_functions)
         if rewardType == 0:
             self.currentRewardToUse = CombinedReward(reward_functions)
         else:
             print((reward_functions[0]))
             self.currentRewardToUse = CombinedReward([reward_functions[0]])
+            self.incrementRewardIndexUsed()
         print("Current Rewards: ", self.currentRewardToUse)
 
     def incrementRewardIndexUsed(self):
@@ -78,5 +79,5 @@ class myCustomRewards(RewardFunction):
         :return: A reward for the player provided.
         """
 
-        print(f'Rewards Count: {self.rewardUseCounter}') 
+        # print(f'Rewards Count: {self.rewardUseCounter}') 
         return self.currentRewardToUse.get_final_reward(player, state, previous_action)

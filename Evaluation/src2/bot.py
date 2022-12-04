@@ -57,7 +57,7 @@ class RLGymExampleBot(BaseAgent):
         self.game_state.decode(packet, ticks_elapsed)
 
         if self.update_action:
-            self.update_action = False
+            # self.update_action = False
 
             # FIXME Hey, botmaker. Verify that this is what you need for your agent
             # By default we treat every match as a 1v1 against a fixed opponent,
@@ -78,18 +78,23 @@ class RLGymExampleBot(BaseAgent):
                 # Grab opponent in same "position" relative to it's teammates
                 opponent = opponents[min(teammates.index(player), len(opponents) - 1)]
 
-                self.game_state.players = [player, opponent[0]]
+                self.game_state.players = [player, opponent]
 
+            # obs = self.obs_builder.build_obs(player, self.game_state, self.action)
+            # self.action = self.agent.act(obs)  # Dim is (N, 8)
             obs = self.obs_builder.build_obs(player, self.game_state, self.action)
-            self.action = self.agent.act(obs)  # Dim is (N, 8)
-
+            self.action = self.act_parser.parse_actions(self.agent.act(obs), self.game_state)[0]  # Dim is (N, 8)
+            print(self.action)
         if self.ticks >= self.tick_skip - 1:
             self.update_controls(self.action)
 
         if self.ticks >= self.tick_skip:
             self.ticks = 0
             self.update_action = True
+        # with open('E:/Code/RLRLGym/blue_scores.txt', 'w') as f:
+        #     f.write(str(self.game_state.__dict__['blue_score']) + ' ')
 
+        # print(self.game_state.__dict__['blue_score'])
         return self.controls
 
     def update_controls(self, action):

@@ -39,6 +39,14 @@ tensorboard --logdir out/logs
 
 ## Evaluate Bot
 - Download [RLBot](https://rlbot.org/)
+- Trained model is stored in ```trained_model``` folder
+- Download Stable-baseline3 to the python destination of RLBot eg:
+```
+c:\users\et_va\appdata\local\rlbotguix\python37\python -m pip install stable-baselines3==1.7.0a4
+c:\users\et_va\appdata\local\rlbotguix\python37\python -m pip install sb3-contrib==1.7.0a0
+c:\users\et_va\appdata\local\rlbotguix\python37\python -m pip install rlgym 
+c:\users\et_va\appdata\local\rlbotguix\python37\python -m pip install pickle5
+```
 - configure bot.py and bot.cfg in ```Evaluation/src```
 
 ## Reference

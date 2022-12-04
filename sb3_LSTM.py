@@ -48,7 +48,7 @@ if __name__ == '__main__':  # Required for multiprocessing
             action_parser=DiscreteAction()  # Discrete > Continuous don't @ me
         )
 
-    env = SB3MultipleInstanceEnv(get_match, 1)            # Start 2 instances, waiting 60 seconds between each
+    env = SB3MultipleInstanceEnv(get_match, 6)            # Start 2 instances, waiting 60 seconds between each
     env = VecCheckNan(env)                                # Optional
     env = VecMonitor(env)                                 # Recommended, logs mean reward and ep_len to Tensorboard
     env = VecNormalize(env, norm_obs=False, gamma=gamma)  # Highly recommended, normalizes rewards
@@ -59,6 +59,13 @@ if __name__ == '__main__':  # Required for multiprocessing
                 ortho_init=False,
                 enable_critic_lstm=True,
             )
+
+    # policy_kwargs=dict(
+    #         net_arch=[512, 512, dict(pi=[256, 256, 256], vf=[256, 256, 256])],
+    #         lstm_hidden_size=64,
+    #         ortho_init=False,
+    #         enable_critic_lstm=True,
+    #     )
 
 
 
@@ -75,14 +82,14 @@ if __name__ == '__main__':  # Required for multiprocessing
         verbose=3,                   # Print out all the info as we're going
         batch_size=4096,             # Batch size as high as possible within reason
         n_steps=4096,                # Number of steps to perform before optimizing network
-        tensorboard_log="out/logs",  # `tensorboard --logdir out/logs` in terminal to see graphs
+        tensorboard_log="LSTM_out/logs",  # `tensorboard --logdir out/logs` in terminal to see graphs
         device="auto"                # Uses GPU if available
     )
 
     # Save model every so often
     # Divide by num_envs (number of agents) because callback only increments every time all agents have taken a step
     # This saves to specified folder with a specified name
-    callback = CheckpointCallback(round(1_000_000 / env.num_envs), save_path="policy", name_prefix="rl_model")
+    callback = CheckpointCallback(round(1_000_000 / env.num_envs), save_path="LSTM_policy", name_prefix="rl_model")
 
     model.learn(100_000_000, callback=callback)
 
@@ -90,12 +97,12 @@ if __name__ == '__main__':  # Required for multiprocessing
     # This will contain all the attributes of the original model
     # Any attribute can be overwritten by using the custom_objects parameter,
     # which includes n_envs (number of agents), which has to be overwritten to use a different amount
-    model = RecurrentPPO.load(
-        "policy/rl_model_150000000_steps.zip",
-        env,
-        custom_objects=dict(n_envs=env.num_envs, _last_obs=None),  # Need this to change number of agents
-        device="auto",  # Need to set device again (if using a specific one)
-        force_reset=True  # Make SB3 reset the env so it doesn't think we're continuing from last state
-    )
-    # Use reset_num_timesteps=False to keep going with same logger/checkpoints
-    model.learn(50_000_000, callback=callback, reset_num_timesteps=False)
+    # model = RecurrentPPO.load(
+    #     "policy/rl_model_150000000_steps.zip",
+    #     env,
+    #     custom_objects=dict(n_envs=env.num_envs, _last_obs=None),  # Need this to change number of agents
+    #     device="auto",  # Need to set device again (if using a specific one)
+    #     force_reset=True  # Make SB3 reset the env so it doesn't think we're continuing from last state
+    # )
+    # # Use reset_num_timesteps=False to keep going with same logger/checkpoints
+    # model.learn(50_000_000, callback=callback, reset_num_timesteps=False)
