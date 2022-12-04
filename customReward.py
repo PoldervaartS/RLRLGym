@@ -30,14 +30,17 @@ class myCustomRewards(RewardFunction):
         
         """
         # capped for array out of bounds
-        rewardIndex = min(len(self.reward_functions) - 1, self.rewardUseCounter // self.REWARDINCREASESTEP)
+        calculatedIndex = min(len(self.reward_functions) - 1, self.rewardUseCounter // self.REWARDINCREASESTEP)
+        if calculatedIndex == self.rewardIndex:
+            return
         
+        self.rewardIndex = calculatedIndex
         if self.rewardType == 1:
             # reward importance gradually descent
-            self.currentRewardToUse = CombinedReward(self.reward_functions[0: rewardIndex + 1], [self.gamma**x for x in range(rewardIndex, -1, -1)])
+            self.currentRewardToUse = CombinedReward(self.reward_functions[0: self.rewardIndex + 1], [self.gamma**x for x in range(self.rewardIndex, -1, -1)])
         elif self.rewardType == 2:
-            self.currentRewardToUse = CombinedReward(self.reward_functions[rewardIndex])
-        print("Current Rewards: ", self.currentRewardToUse)
+            print(f'Set reward to be index {self.rewardIndex}')
+            self.currentRewardToUse = CombinedReward([self.reward_functions[self.rewardIndex]])
 
 
 
@@ -61,10 +64,11 @@ class myCustomRewards(RewardFunction):
 
         :return: A reward for the player provided.
         """
+        rewardForStep = self.currentRewardToUse.get_reward(player, state, previous_action)
         self.rewardUseCounter += 1
         if self.rewardUseCounter > 0 and self.rewardUseCounter % self.REWARDINCREASESTEP == 0:
             self.incrementRewardIndexUsed()
-        return self.currentRewardToUse.get_reward(player, state, previous_action)
+        return rewardForStep
 
     def get_final_reward(self, player: PlayerData, state: GameState, previous_action: np.ndarray) -> float:
         """
