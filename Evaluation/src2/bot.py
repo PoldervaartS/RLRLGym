@@ -52,12 +52,12 @@ class RLGymExampleBot(BaseAgent):
         delta = cur_time - self.prev_time
         self.prev_time = cur_time
 
-        ticks_elapsed = self.ticks * 120 #round(delta * 120)
+        ticks_elapsed = delta * 120 #round(delta * 120)
         self.ticks += ticks_elapsed
         self.game_state.decode(packet, ticks_elapsed)
 
         if self.update_action:
-            # self.update_action = False
+            self.update_action = False
 
             # FIXME Hey, botmaker. Verify that this is what you need for your agent
             # By default we treat every match as a 1v1 against a fixed opponent,
@@ -70,6 +70,7 @@ class RLGymExampleBot(BaseAgent):
             if len(opponents) == 0:
                 # There's no opponent, we assume this model is 1v0
                 self.game_state.players = [player]
+                print('no opponents')
             else:
                 # Sort by distance to ball
                 teammates.sort(key=lambda p: np.linalg.norm(self.game_state.ball.position - p.car_data.position))

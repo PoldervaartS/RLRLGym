@@ -33,7 +33,6 @@ class RLGymExampleBot(BaseAgent):
 
         self.expected_teammates = 0
         self.expected_opponents = 1
-
         self.blue_scores = []
         self.orange_scores = []
         self.f = open('E:/Code/RLRLGym/blue_scores.txt', 'w')
@@ -75,6 +74,7 @@ class RLGymExampleBot(BaseAgent):
             if len(opponents) == 0:
                 # There's no opponent, we assume this model is 1v0
                 self.game_state.players = [player]
+                print('no opponents')
             else:
                 # Sort by distance to ball
                 teammates.sort(key=lambda p: np.linalg.norm(self.game_state.ball.position - p.car_data.position))
@@ -89,7 +89,7 @@ class RLGymExampleBot(BaseAgent):
             # self.action = self.agent.act(obs)  # Dim is (N, 8)
             obs = self.obs_builder.build_obs(player, self.game_state, self.action)
             self.action = self.act_parser.parse_actions(self.agent.act(obs), self.game_state)[0]  # Dim is (N, 8)
-
+            print(self.action)
         if self.ticks >= self.tick_skip - 1:
             self.update_controls(self.action)
 
@@ -98,7 +98,6 @@ class RLGymExampleBot(BaseAgent):
             self.update_action = True
         self.f.write(str(self.game_state.__dict__['blue_score']) + ' ')
         self.f2.write(str(self.game_state.__dict__['orange_score']) + ' ')
-
         # print(self.game_state.__dict__['blue_score'])
         return self.controls
 
