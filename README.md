@@ -1,5 +1,11 @@
-# RLRLGym
+# Rocket League Bot: Explore Shaped Reward Functions
 Reinforcement Learning Exploration of PPO and training methods in Rocket League
+
+## Four Types of Shaped Rewards are explored
+- Type 0: Baseline PPO
+- Type 1: Add Rewards Gradually in and Descent Previous Reward Types
+- Type 2: Individual Reward at a Time
+- Type 3: A LSTM Variant of Baseline
 
 
 ## Requirements
@@ -23,7 +29,7 @@ Press F2 and it will pop-up windows like this:
 ```
 pip install -r requirements.txt 
 ```
-enable RLGYM plubin in Bakkesmod
+- enable RLGym plubin in Bakkesmod
 
 ## Run GPU Version
 Download CUDA
@@ -31,8 +37,13 @@ Download GPU version of Pytorch
 ```
 stable_baselines3.common.utils.get_device
 ```
+## Train a model
+Just run in the Conda Env the specific python files
+```
+python ./sb3.py
+```
 
-## Training Data Visulization
+## Training Data Visualization
 ```
 tensorboard --logdir out/logs
 ```
@@ -48,6 +59,15 @@ c:\users\et_va\appdata\local\rlbotguix\python37\python -m pip install rlgym
 c:\users\et_va\appdata\local\rlbotguix\python37\python -m pip install pickle5
 ```
 - configure bot.py and bot.cfg in ```Evaluation/src```
+- then you can choose which bot to play with in RlBot GUI
+- a game data plot tool is available at ```Evaluation/plot.py```
+
+## Trained Models
+Trained Models are located at ```trained_model```
+## Trained Models' Data for Visualization
+```
+tensorboard --logdir out/logs
+```
 
 ## Reference
 [RLGym Website](https://rlgym.org/docs-page.html#getting-started)
