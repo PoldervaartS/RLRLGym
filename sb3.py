@@ -62,7 +62,7 @@ if __name__ == '__main__':  # Required for multiprocessing
     model = PPO(
         MlpPolicy,
         env,
-        policy_kwargs=policy_kwargs,
+        # policy_kwargs=policy_kwargs,
         n_epochs=32,                 # PPO calls for multiple epochs
         learning_rate=1e-5,          # Around this is fairly common for PPO
         ent_coef=0.01,               # From PPO Atari

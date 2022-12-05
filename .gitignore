@@ -5,4 +5,7 @@
 /type1_policy
 /LSTM_out
 /LSTM_policy
-*_out/
+_out/
+/sb3_type2_out
+/type2_policy
+/base_lineout

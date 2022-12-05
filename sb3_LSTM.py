@@ -53,19 +53,19 @@ if __name__ == '__main__':  # Required for multiprocessing
     env = VecMonitor(env)                                 # Recommended, logs mean reward and ep_len to Tensorboard
     env = VecNormalize(env, norm_obs=False, gamma=gamma)  # Highly recommended, normalizes rewards
 
-    policy_kwargs=dict(
-                net_arch=[dict(vf=[64])],
-                lstm_hidden_size=64,
-                ortho_init=False,
-                enable_critic_lstm=True,
-            )
-
     # policy_kwargs=dict(
-    #         net_arch=[512, 512, dict(pi=[256, 256, 256], vf=[256, 256, 256])],
-    #         lstm_hidden_size=64,
-    #         ortho_init=False,
-    #         enable_critic_lstm=True,
-    #     )
+    #             net_arch=[dict(vf=[64])],
+    #             lstm_hidden_size=64,
+    #             ortho_init=False,
+    #             enable_critic_lstm=True,
+    #         )
+
+    policy_kwargs=dict(
+            net_arch=[512, 512, dict(pi=[256, 256, 256], vf=[256, 256, 256])],
+            lstm_hidden_size=64,
+            ortho_init=False,
+            enable_critic_lstm=True,
+        )
 
 
 
