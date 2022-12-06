@@ -1,6 +1,12 @@
 # Rocket League Bot: Explore Shaped Reward Functions
 Reinforcement Learning Exploration of PPO and training methods in Rocket League
 
+## Project Results Video
+
+[![Link to Youtube with Video Demonstration of project](https://img.youtube.com/vi/xuStIZeYJjM/0.jpg)](https://www.youtube.com/watch?v=xuStIZeYJjM)
+
+
+
 ## Four Types of Shaped Rewards are explored
 - Type 0: Baseline PPO
 - Type 1: Add Rewards Gradually in and Descent Previous Reward Types
